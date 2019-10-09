@@ -1,3 +1,5 @@
+# -*- Pythonによる機械学習1 演習2 -*-
+
 # 数値計算用のライブラリとしてnumpyをnpとしてインポート
 import numpy as np
 
