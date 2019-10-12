@@ -46,11 +46,14 @@ print("g(H):\n{}\n".format(g_H))
 """
 
 # ソフトマックスを計算する
-exp_f_x = np.exp(f_x) #分子
-# print(f"exp_f_x\n{exp_f_x}\n")
-sum_exp_f_x = np.sum(exp_f_x[:]) #分母
-# print(f"sum_exp_f_x\n{sum_exp_f_x}\n")
-softmax = exp_f_x / sum_exp_f_x
+W_transpose = W.T
+f_s = np.matmul(W_transpose,x)
+f_s = f_s + b #expの内部
+exp_f_s = np.exp(f_s) #分子
+# print(f"exp_f_s\n{exp_f_s}\n")
+sum_exp_f_s = np.sum(exp_f_s[:]) #分母
+# print(f"sum_exp_f_s\n{sum_exp_f_s}\n")
+softmax = exp_f_s / sum_exp_f_s
 print(f"softmax\n{softmax}\n")
 # 合計が1になることを確認
 # softmax_sum = np.sum(softmax[:])
