@@ -48,7 +48,7 @@ class sentence:
 
 		left = np.array(['negative','positive'])
 		plt.bar(left,height,align='center')
-		plt.title("keyword:not",fontsize=14)
+		plt.title("keyword:"+keyword,fontsize=14)
 		plt.xlabel("Score",fontsize=14)
 		plt.ylabel("Ratio",fontsize=14)
 
