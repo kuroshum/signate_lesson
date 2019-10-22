@@ -157,7 +157,7 @@ class artificial:
 		if isTrainPlot:
 			# 学習データを描画
 			pTrain = plt.plot(xTrain, self.yTrain, 'o', color="#FFA500", label="Training Data", markeredgecolor='k', markersize=8)
-			plt.plot(xTrain, self.train(xTrain.reshape(1, -1)), '-', color="#FF0000")
+			plt.plot(xTrain, self.train(np.array([xTrain])), '-', color="#FF0000")
 
 		# 評価データを描画
 		pTest = plt.plot(xTest, self.yTest, 's', color="#FFFF00", label="Test Data", markeredgecolor='k', markersize=8)
