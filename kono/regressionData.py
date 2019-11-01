@@ -197,7 +197,7 @@ class artificial:
 	#------------------------------------
 	def train(self, xTrain):
 		x = np.concatenate([xTrain, np.ones((1, xTrain.shape[1]))])
-		w = np.linalg.inv(x @ x.T) @ np.sum(self.yTrain * x, axis=1);
+		w = np.linalg.inv(x @ x.T) @ np.sum(self.yTrain * x, axis=1)
 		a, b = np.split(w, [w.shape[0] - 1])
 		return a.T @ xTrain + b.T
 	#------------------------------------
