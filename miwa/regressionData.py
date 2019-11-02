@@ -212,6 +212,7 @@ class artificial:
 
 	#------------------------------------
 	def train(self):
+		np.append(self.xTrain,1)
 		x_sum=np.dot(self.xTrain,self.xTrain.T)
 		x_inv=np.linalg.inv(x_sum)
 		y_sum=np.dot(self.yTrain.T,self.xTrain.T)
