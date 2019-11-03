@@ -212,13 +212,10 @@ class artificial:
 
 	#------------------------------------
 	def train(self):
-		l = np.dot(self.xTrain,self.xTrain.T)
-		l1 = np.linalg.inv(l)
-
-		r = self.yTrain*self.xTrain
-		r1 = np.sum(r,axis=1)
-		w = np.dot(l1,r1)
-
+		x = np.insert(self.xTrain,self.xTrain.shape[0],1,axis=0)
+		l = np.linalg.inv(np.dot(x,x.T))
+		r = np.dot(x,self.yTrain.T)
+		w = np.dot(l,r)
 		return w
 	#------------------------------------
 	
