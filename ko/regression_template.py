@@ -48,9 +48,8 @@ class linearRegression():
     # 3) 予測
     # x: 入力データ（入力次元 x データ数）
     def predict(self,x):
-        print(f"W:\n{self.trainMat()}\n")
         y = np.matmul(self.trainMat().T, np.vstack([x, np.ones(x.shape[1], dtype = np.int)]))
-        return y
+        return np.array(y)[0]
     #------------------------------------
 
     #------------------------------------
@@ -59,18 +58,8 @@ class linearRegression():
     # y: 出力データ（データ数）
     def loss(self,x,y):
         f_x = self.predict(x)
-        # print(f"f_x:\n{f_x}\n")
         y = y[np.newaxis]
-        print(y - f_x)
-        print(y.shape)
-        print(f_x.shape)
-        # pdb.set_trace()
-        yf_x = (y - f_x)
-        print(yf_x.shape)
-        sum_yf_x = np.sum(pow(yf_x, 2))
-        print(sum_yf_x.shape)
-        loss = sum_yf_x / yf_x.shape[1]
-        print(loss)
+        loss = np.sum(pow(y - f_x, 2)) / (y - f_x).shape[1]
         return loss
     #------------------------------------
 # クラスの定義終わり
@@ -81,8 +70,10 @@ class linearRegression():
 if __name__ == "__main__":
     
     # 1) 学習入力次元が2の場合のデーター生成
-    # myData = rg.artificial(200,100, dataType="1D")
-    myData = rg.artificial(200,100, dataType="1D",isNonlinear=True)
+    myData = rg.artificial(200,100, dataType="1D")
+    # myData = rg.artificial(200,100, dataType="1D",isNonlinear=True)
+    # myData = rg.artificial(200,100, dataType="2D")
+    # myData = rg.artificial(200,100, dataType="2D",isNonlinear=True)
     
     # 2) 線形回帰モデル
     #regression = linearRegression(myData.xTrain,myData.yTrain)
