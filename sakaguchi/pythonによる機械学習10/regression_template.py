@@ -70,6 +70,42 @@ class linearRegression():
 		loss = np.sum((y-preY)*(y-preY))/len(y)
 		return loss
 	#------------------------------------
+
+
+	#------------------------------------
+	# 6) 2つのデータ集合間の全ての組み合わせの距離の計算
+	# x: 行列（次元 x データ数）
+	# z: 行列（次元 x データ数）
+	def calcDist(self,x,z):
+		#【行列xのデータ点x1, x2, ..., xNと、行列zのデータ点z1, z2, ..., zMとの間のMxN個の距離を計算】
+		xTile = np.tile(x,(x.shape[0],z.shape[1],1))
+		zTile = np.tile(z.T,(z.shape[0],1,x.shape[1]))
+		dist = abs(xTile.T-zTile.T)
+		return dist
+	#------------------------------------
+
+	#------------------------------------
+	# 5) カーネルの計算
+	# x: カーネルを計算する対象の行列（次元 x データ数）
+	def kernel(self,x):
+		#【self.xの各データ点xiと行列xの各データ点xjと間のカーネル値k(xi,xj)を各要素に持つグラム行列を計算】
+		ker = self.calcDist(self.x,x)
+		K = np.exp(-pow(ker,2)/(2*pow(self.kernelParam,2)))
+		return K
+	#------------------------------------
+
+	#------------------------------------
+	def trainMatKernel(self):
+		tKer = self.kernel(self.x)[:,:,0]
+		x = np.insert(tKer,tKer.shape[0],1,axis=0)
+		ramda = 0.01
+		i = np.eye(x.shape[0])
+		l = np.linalg.inv(np.dot(x,x.T)+ramda*i)
+		r = np.dot(x,self.y.T)
+		self.w = np.dot(l,r)
+		#self.w = np.zeros([self.xDim,1])
+	#------------------------------------
+
 # クラスの定義終わり
 #-------------------
 
@@ -77,6 +113,8 @@ class linearRegression():
 # メインの始まり
 if __name__ == "__main__":
 	
+	#------------------------------------
+	#liner
 	# 1) 学習入力次元が2の場合のデーター生成
 	myData = rg.artificial(200,100, dataType="1D")
 	#myData = rg.artificial(200,100, dataType="1D",isNonlinear=True)
@@ -116,13 +154,7 @@ if __name__ == "__main__":
 	# 2) 線形回帰モデル
 	regression = linearRegression(myData.xTrain,myData.yTrain)
 	#regression = linearRegression(myData.xTrain,myData.yTrain,kernelType="gaussian",kernelParam=1)
-	
-	# 3) 学習（For文版）
-	sTime = time.time()
-	regression.train()
-	eTime = time.time()
-	print("train with for-loop: time={0:.4} sec".format(eTime-sTime))
-	
+		
 	# 4) 学習（行列版）
 	sTime = time.time()
 	regression.trainMat()
@@ -138,6 +170,44 @@ if __name__ == "__main__":
 	myData.plot(predict)
 
 
+	#------------------------------------
+	#Kernel
+	# 1) 学習入力次元が2の場合のデーター生成
+	myData = rg.artificial(200,100, dataType="1D",isNonlinear=True)
+	# 2) 線形回帰モデル
+	regression = linearRegression(myData.xTrain,myData.yTrain,kernelType="gaussian",kernelParam=1)
+	# 4) 学習
+	regression.trainMatKernel()
+	# 6) 学習・評価データおよび予測結果をプロット
+	predict = regression.predict(regression.kernel(myData.xTest)[:,:,0])
+	myData.plot(predict,isTrainPlot=False)
+
+
+
+	#------------------------------------
+	#Kernel2
+	# 1) 学習入力次元が2の場合のデーター生成
+	myData = rg.artificial(200,100, dataType="1D",isNonlinear=True)
+	# 2) 線形回帰モデル
+	regression = linearRegression(myData.xTrain,myData.yTrain,kernelType="gaussian",kernelParam=0.1)
+	# 4) 学習
+	regression.trainMatKernel()
+	# 6) 学習・評価データおよび予測結果をプロット
+	predict = regression.predict(regression.kernel(myData.xTest)[:,:,0])
+	myData.plot(predict,isTrainPlot=False)
+
+
+	#------------------------------------
+	#Kernel3
+	# 1) 学習入力次元が2の場合のデーター生成
+	myData = rg.artificial(200,100, dataType="1D",isNonlinear=True)
+	# 2) 線形回帰モデル
+	regression = linearRegression(myData.xTrain,myData.yTrain,kernelType="gaussian",kernelParam=5)
+	# 4) 学習
+	regression.trainMatKernel()
+	# 6) 学習・評価データおよび予測結果をプロット
+	predict = regression.predict(regression.kernel(myData.xTest)[:,:,0])
+	myData.plot(predict,isTrainPlot=False)
 
 #メインの終わり
 #-------------------
