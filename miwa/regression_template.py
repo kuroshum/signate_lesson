@@ -29,9 +29,10 @@ class linearRegression():
 	def trainMat(self):
 		self.w = np.zeros([self.xDim,1])
 	#------------------------------------
-		one=np.ones((200,1))
-		self.x=np.append(self.x,one)
-		self.x=self.x.reshape(2,200)
+		one=np.ones((1,200))
+		pdb.set_trace()
+		self.x=np.vstack((self.x,one))
+		#$self.x=self.x.reshape(2,200)
 		x_sum=np.matmul(self.x,self.x.T)
 		x_inv=np.linalg.inv(x_sum)
 		y_sum=np.matmul(self.y.T,self.x.T)
@@ -43,8 +44,8 @@ class linearRegression():
 	def predict(self,x):
 		y = []
 		one=np.ones((1,100))
-		x=np.append(x,one)
-		x=x.reshape(2,100)
+		x=np.vstack((x,one))
+		#x=x.reshape(2,100)
 		y = np.matmul(self.w.T,x)
 		return y
 	#------------------------------------
@@ -56,8 +57,8 @@ class linearRegression():
 	def loss(self,x,y):
 		loss = 0.0
 		one=np.ones((1,100))
-		x=np.append(x,one)
-		x=x.reshape(2,100)
+		x=np.vstack((x,one))
+		#x=x.reshape(2,100)
 
 		loss=y-np.matmul(self.w.T,x)
 		#pdb.set_trace()
@@ -72,7 +73,7 @@ class linearRegression():
 if __name__ == "__main__":
 
 	# 1) �w�K���͎�����2�̏ꍇ�̃f�[�^�[����
-	myData = rg.artificial(200,100, dataType="1D")
+	myData = rg.artificial(200,100, dataType="2D")
 	#myData = rg.artificial(200,100, dataType="1D",isNonlinear=True)
 
 	# 2) ���`���A���f��
