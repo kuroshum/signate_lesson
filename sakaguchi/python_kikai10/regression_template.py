@@ -91,12 +91,12 @@ class linearRegression():
 		#【self.xの各データ点xiと行列xの各データ点xjと間のカーネル値k(xi,xj)を各要素に持つグラム行列を計算】
 		ker = self.calcDist(self.x,x)
 		K = np.exp(-pow(ker,2)/(2*pow(self.kernelParam,2)))
-		return K
+		return K[:,:,0]
 	#------------------------------------
 
 	#------------------------------------
 	def trainMatKernel(self):
-		tKer = self.kernel(self.x)[:,:,0]
+		tKer = self.kernel(self.x)
 		x = np.insert(tKer,tKer.shape[0],1,axis=0)
 		ramda = 0.01
 		i = np.eye(x.shape[0])
@@ -178,8 +178,10 @@ if __name__ == "__main__":
 	regression = linearRegression(myData.xTrain,myData.yTrain,kernelType="gaussian",kernelParam=1)
 	# 4) 学習
 	regression.trainMatKernel()
+	# 5) 学習したモデルを用いて予測
+	print("loss={0:.3}".format(regression.loss(regression.kernel(myData.xTest),myData.yTest)))
 	# 6) 学習・評価データおよび予測結果をプロット
-	predict = regression.predict(regression.kernel(myData.xTest)[:,:,0])
+	predict = regression.predict(regression.kernel(myData.xTest))
 	myData.plot(predict,isTrainPlot=False)
 
 
@@ -192,8 +194,10 @@ if __name__ == "__main__":
 	regression = linearRegression(myData.xTrain,myData.yTrain,kernelType="gaussian",kernelParam=0.1)
 	# 4) 学習
 	regression.trainMatKernel()
+	# 5) 学習したモデルを用いて予測
+	print("loss={0:.3}".format(regression.loss(regression.kernel(myData.xTest),myData.yTest)))
 	# 6) 学習・評価データおよび予測結果をプロット
-	predict = regression.predict(regression.kernel(myData.xTest)[:,:,0])
+	predict = regression.predict(regression.kernel(myData.xTest))
 	myData.plot(predict,isTrainPlot=False)
 
 
@@ -205,8 +209,10 @@ if __name__ == "__main__":
 	regression = linearRegression(myData.xTrain,myData.yTrain,kernelType="gaussian",kernelParam=5)
 	# 4) 学習
 	regression.trainMatKernel()
+	# 5) 学習したモデルを用いて予測
+	print("loss={0:.3}".format(regression.loss(regression.kernel(myData.xTest),myData.yTest)))
 	# 6) 学習・評価データおよび予測結果をプロット
-	predict = regression.predict(regression.kernel(myData.xTest)[:,:,0])
+	predict = regression.predict(regression.kernel(myData.xTest))
 	myData.plot(predict,isTrainPlot=False)
 
 #メインの終わり
