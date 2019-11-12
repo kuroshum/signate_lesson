@@ -25,8 +25,6 @@ print("\nbank_df.isnull().sum(axis=0)=\n{}".format(bank_df.isnull().sum(axis=0))
 #-----------------------
 #練習問題2
 #print(bank_df.isnull().sum(axis=1).sort_values().index)
-#print(bank_df[bank_df.isnull().sum(axis=1).sort_values().index])
-#print(bank_df.sort_index(bank_df.isnull().sum(axis=1).sort_values()))
 #----------------------
 
 print("\nbank_df.describe()=\n{}".format(bank_df.describe()))
@@ -108,36 +106,43 @@ vals = bank_df['marital'].value_counts(ascending=False,normalize=True).values
 plt.pie(vals,labels=label)
 plt.axis('equal')
 plt.show()
+
 label = bank_df['education'].value_counts(ascending=False,normalize=True).index
 vals = bank_df['education'].value_counts(ascending=False,normalize=True).values
 plt.pie(vals,labels=label)
 plt.axis('equal')
 plt.show()
+
 label = bank_df['default'].value_counts(ascending=False,normalize=True).index
 vals = bank_df['default'].value_counts(ascending=False,normalize=True).values
 plt.pie(vals,labels=label)
 plt.axis('equal')
 plt.show()
+
 label = bank_df['housing'].value_counts(ascending=False,normalize=True).index
 vals = bank_df['housing'].value_counts(ascending=False,normalize=True).values
 plt.pie(vals,labels=label)
 plt.axis('equal')
 plt.show()
+
 label = bank_df['loan'].value_counts(ascending=False,normalize=True).index
 vals = bank_df['loan'].value_counts(ascending=False,normalize=True).values
 plt.pie(vals,labels=label)
 plt.axis('equal')
 plt.show()
+
 label = bank_df['contact'].value_counts(ascending=False,normalize=True).index
 vals = bank_df['contact'].value_counts(ascending=False,normalize=True).values
 plt.pie(vals,labels=label)
 plt.axis('equal')
 plt.show()
+
 label = bank_df['month'].value_counts(ascending=False,normalize=True).index
 vals = bank_df['month'].value_counts(ascending=False,normalize=True).values
 plt.pie(vals,labels=label)
 plt.axis('equal')
 plt.show()
+
 label = bank_df['poutcome'].value_counts(ascending=False,normalize=True).index
 vals = bank_df['poutcome'].value_counts(ascending=False,normalize=True).values
 plt.pie(vals,labels=label)
@@ -235,4 +240,5 @@ ax = plt.gca()
 plt.setp(ax,xticklabels=['yes','no'])
 plt.show()
 #-----------------------
+
 
