@@ -25,6 +25,7 @@ class linearRegression():
     
     def predict(self,x):
         y = np.matmul(self.w, np.concatenate([x, np.ones((1, x.shape[1]))]))
+        pdb.set_trace()
         return y
     
     def loss(self,x,y):
