@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 data_path = 'data/bank.csv'
 
@@ -24,7 +25,11 @@ print("\nbank_df.isnull().sum(axis=0)=\n{}".format(bank_df.isnull().sum(axis=0))
 
 #-----------------------
 #練習問題2
-#print(bank_df.isnull().sum(axis=1).sort_values().index)
+#print(bank_df.isnull().sum(axis=1).sort_values(ascending=False))
+bank_np = bank_df.to_numpy()
+bank_np = bank_np[bank_df.isnull().sum(axis=1).sort_values(ascending=False).index]
+bank_df_nan = pd.DataFrame(bank_np)
+print(bank_df_nan)
 #----------------------
 
 print("\nbank_df.describe()=\n{}".format(bank_df.describe()))
