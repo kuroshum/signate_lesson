@@ -42,8 +42,8 @@ class linearRegression():
 	def predict(self,x):
 		y = []
 		one=np.ones((1,100))
-		x=np.vstack((x,one))
-		y = np.matmul(self.w.T,x)
+		x1=np.insert(x,x.shape[0],axis=0)
+		y = np.matmul(self.w.T,x1)
 		return y
 	#------------------------------------
 
@@ -55,10 +55,12 @@ class linearRegression():
 		loss = 0.0
 		#print('x.shape',x.shape)
 		#print('w.shape',self.w.shape)
-		print(y.shape)
-		one=np.ones((100,200))
-		x=np.vstack((x,one))
+		#print(y.shape)
+		#one=np.ones((1,100))
+		#x=np.vstack((x,one))
 		#print(np.matmul(self.w.T,x).shape)
+		#print(self.w.shape)
+		#print(x.shape)
 		loss=y-np.matmul(self.w.T,x)
 		#pdb.set_trace()
 		loss=np.mean(np.square(loss))
@@ -70,25 +72,28 @@ class linearRegression():
 		#print('x.shape',x.shape)
 		#print('z.T.shape',z.T.shape)
 		x_2=np.tile(x,(x.shape[0],z.shape[1],1))
-		z_2=np.tile(z.T,(x.shape[1],z.shape[0],1))
+		z_2=np.tile(z.T,(z.shape[0],1,x.shape[1]))
 		#print('x_2',x_2.shape)
 		#print('x_2.T',x_2.T.shape)
 		#print('z_2',z_2.shape)
-		dist=np.abs(x_2.T-z_2)
+		dist=np.abs(x_2.T-z_2.T)
 
 		#print(dist)
 		return dist
 
 	def kernel(self,x):
 		#pdb.set_trace()
+		print(x.shape)
 		K=np.exp(-regression.calcDist(x,self.x)/(2*self.kernelParam**2))
 		K=np.squeeze(K)
-		#print(K.shape)
+		K=np.insert(K,K.shape[0],1,axis=0)
+		print(K.shape)
 		return K
 
 	def trainMatKernel(self):
 		K=self.kernel(self.x)
-		self.w=np.linalg.inv(np.dot(K,K.T))*(np.dot(self.y,K))
+		self.y=self.y[np.newaxis]
+		self.w=np.matmul(np.linalg.inv(np.dot(K,K.T)),(np.dot(K,self.y.T)))
 		#print(self.w.shape)
 #-------------------
 
