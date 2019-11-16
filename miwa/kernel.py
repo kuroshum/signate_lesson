@@ -41,9 +41,7 @@ class linearRegression():
 	# x: ���̓f�[�^�i���͎��� x �f�[�^���j
 	def predict(self,x):
 		y = []
-		one=np.ones((1,100))
-		x1=np.insert(x,x.shape[0],axis=0)
-		y = np.matmul(self.w.T,x1)
+		y = np.matmul(self.w.T,x)
 		return y
 	#------------------------------------
 
@@ -61,7 +59,7 @@ class linearRegression():
 		#print(np.matmul(self.w.T,x).shape)
 		#print(self.w.shape)
 		#print(x.shape)
-		loss=y-np.matmul(self.w.T,x)
+		loss=y-self.predict(x)
 		#pdb.set_trace()
 		loss=np.mean(np.square(loss))
 		#pdb.set_trace()
@@ -83,17 +81,18 @@ class linearRegression():
 
 	def kernel(self,x):
 		#pdb.set_trace()
-		print(x.shape)
-		K=np.exp(-regression.calcDist(x,self.x)/(2*self.kernelParam**2))
+		#print(x.shape)
+		K=np.exp(-np.square(self.calcDist(self.x,x))/(2*self.kernelParam**2))
 		K=np.squeeze(K)
 		K=np.insert(K,K.shape[0],1,axis=0)
-		print(K.shape)
+		#print(K.shape)
 		return K
 
 	def trainMatKernel(self):
 		K=self.kernel(self.x)
 		self.y=self.y[np.newaxis]
-		self.w=np.matmul(np.linalg.inv(np.dot(K,K.T)),(np.dot(K,self.y.T)))
+		self.w=np.matmul(np.linalg.inv(np.dot(K,K.T)+np.eye(201)*0.01),(np.dot(K,self.y.T)))
+		print(self.w.shape)
 		#print(self.w.shape)
 #-------------------
 
@@ -127,6 +126,8 @@ if __name__ == "__main__":
 
 	# 6) �w�K�E�]���f�[�^�����ї\�����ʂ��v���b�g
 	predict = regression.predict(regression.kernel(myData.xTest))
+	print(predict)
+	predict=predict.flatten()
 	myData.plot(predict,isTrainPlot=False)
 
 
