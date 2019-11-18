@@ -265,7 +265,7 @@ print(bank_df_month.head())
 
 # 分析データセットの作成
 tmp0 = bank_df[['age', 'default', 'balance', 'housing', 'loan', 'day', 'duration', 'campaign', 'pdays', 'previous', 'y']]
-print(tmp1.head())
+print(tmp0.head())
 tmp1 = pd.concat([tmp0, bank_df_job], axis=1)
 tmp2 = pd.concat([tmp1, bank_df_marital], axis=1)
 tmp3 = pd.concat([tmp2, bank_df_education], axis=1)
@@ -273,3 +273,5 @@ tmp4 = pd.concat([tmp3, bank_df_contact], axis=1)
 bank_df_new = pd.concat([tmp4, bank_df_month], axis=1)
 print(bank_df_new.head())
 print(bank_df_new.dtypes)
+# 出力
+bank_df_new.to_csv('data/bank_prep.csv')
