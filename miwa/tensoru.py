@@ -3,7 +3,8 @@ import numpy as np
 import pdb
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import fetch_openml
-
+import matplotlib.pylab as plt
+import os
 CODE = 0
 
 #------------------------------------------------------------------------------
@@ -81,7 +82,7 @@ if __name__ == "__main__":
 
     # 特徴量(x_t)とターゲット(y_t)のプレースホルダー
     x_t = tf.placeholder(tf.float32,[None,xDim])
-    y_t = tf.placeholder(tf.float32,[None,1])
+    y_t = tf.placeholder(tf.float32,[None,10])
     learning_rate = tf.constant(0.01, dtype=tf.float32)
     #--------------------------------------------------------------------------------
 
@@ -93,8 +94,8 @@ if __name__ == "__main__":
     output_test = linear_regression(x_t, xDim, yDim, reuse=True)
 
     # 損失関数(クロスエントロピー)
-    loss_square_train =tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=x_t, logits=output_train))
-    loss_square_test = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y_t, logits=output_test))
+    loss_square_train =tf.reduce_mean(-tf.reduce_sum(y_t * tf.log(output_train)))
+    loss_square_test = tf.reduce_mean(-tf.reduce_sum(y_t * tf.log(output_test)))
     #pdb.set_trace()
     # 最適化
     opt = tf.train.AdamOptimizer(learning_rate)
@@ -138,17 +139,17 @@ if __name__ == "__main__":
                 if idx + BATCH_SIZE < num_data_train else num_data_train]]
             batch_t = yData_train[sff_train_idx[idx: idx + BATCH_SIZE
                 if idx + BATCH_SIZE < num_data_train else num_data_train]]
-            pdb.set_trace()
+            #pdb.set_trace()
             sess.run(training_step, feed_dict = {x_t: batch_x, y_t: batch_t})
         #-------------------------------------
-
-
+        #pdb.set_trace()
         # 反復10回につき一回lossを表示
         if ite % test_rate == 0:
-             train_loss = sess.run(loss, feed_dict = {x_t: train_x, y_t: train_t})
-             train_acc = sess.run(acc, feed_dict = {x_t: train_x, y_t: train_t})
-             test_loss = sess.run(loss, feed_dict = {x_t: test_x, y_t: test_t})
-             test_acc = sess.run(acc, feed_dict = {x_t: test_x, y_t: test_t})
+             #pdb.set_trace()
+             train_loss = sess.run(loss_square_train, feed_dict = {x_t: xData_train, y_t: yData_train})
+             print('train_loss:',train_loss)
+             test_loss = sess.run(loss_square_test, feed_dict = {x_t: xData_test, y_t: yData_test})
+             print('test_loss:',test_loss)
             #-------------------------------------
             # バッチ正規化を実装(テスト)
         sff_test_idx = np.random.permutation(num_data_test)
@@ -157,7 +158,10 @@ if __name__ == "__main__":
                 if idx + BATCH_SIZE < num_data_test else num_data_test]]
             batch_t = yData_test[sff_test_idx[idx: idx + BATCH_SIZE
                 if idx + BATCH_SIZE < num_data_test else num_data_test]]
-            sess.run(training_step, feed_dict = {X: batch_x, t: batch_t})
+            sess.run(training_step, feed_dict = {x_t: batch_x, y_t: batch_t})
+        #pdb.set_trace()
+        loss_train_list.append(train_loss)
+        loss_test_list.append(test_loss)
             #-------------------------------------
             #-------------------------------------
 
@@ -165,3 +169,12 @@ if __name__ == "__main__":
 
     #--------------------------------------------------------------------------------
     # 学習とテストのlossの履歴をplot
+    plt.figure(figsize=(8,4))
+    plt.plot(loss_train_list,marker="o",color="blue")
+    plt.legend()
+    plt.savefig(os.path.join('visualization',"loss_train_list.png"))
+    plt.figure(figsize=(8,4))
+    plt.plot(loss_test_list,marker="o",color="blue")
+    plt.legend()
+    plt.savefig(os.path.join('visualization',"loss_test_list.png"))
+    plt.close()
