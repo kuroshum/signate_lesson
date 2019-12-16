@@ -34,7 +34,7 @@ class sentence:
 	#------------------------------------
 
 	def getPositiveSentence(self):
-		return self.data['sentence'][[self.data['score'][ind] == 1 for ind in np.arange(len(self.data['score']))]].values
+		return self.data['sentence'][self.data['score'] == 1].values
 
 	def plotScoreRatio(self, keyword):
 		results1 = self.search(keyword)
