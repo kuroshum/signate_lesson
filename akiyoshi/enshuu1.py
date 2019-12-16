@@ -19,23 +19,23 @@ d_array3 = np.array(d_list3)
 d_array4 = np.array(d_list4)
 
 # numpy_arrayの要素の追加
-print("要素の追加前：",d_array1,d_array2)
+#print("要素の追加前：",d_array1,d_array2)
 d_array1 = np.append(d_array1,'Wakayama Dai')
 d_array2 = np.append(d_array2,180.2)
-print("要素の追加後：",d_array1,d_array2)
-print("-------\n")
+#print("要素の追加後：",d_array1,d_array2)
+#print("-------\n")
 
 d_array3 = np.append(d_array3,'age')
 
 # numpy_arrayの要素への様々な参照方法
-print("全ての要素:",d_array1[:])
-print("0番目の要素:",d_array1[0])
-print("1番目までの要素:",d_array1[:2])
-print("最後の要素:",d_array1[-1])
-print("0から1番目までの要素:",d_array1[0:2])
-print("170以上のインデックス:",np.where(d_array2>170))
-print("170以上の要素:",d_array1[d_array2>170])
-print("-------\n")
+#print("全ての要素:",d_array1[:])
+#print("0番目の要素:",d_array1[0])
+#print("1番目までの要素:",d_array1[:2])
+#print("最後の要素:",d_array1[-1])
+#print("0から1番目までの要素:",d_array1[0:2])
+#print("170以上のインデックス:",np.where(d_array2>170))
+#print("170以上の要素:",d_array1[d_array2>170])
+#print("-------\n")
 
 # numpy arrayからdataframeへの変換
 # pandas.Seriesを用いて項目名にd_array3の要素（name, height）を設定する
@@ -47,5 +47,5 @@ column3 = pd.Series(d_array4,name=d_array3[2])
 d_dataframe = pd.concat([column1,column2,column3],axis=1)
 
 print("d_dataframe:\n",d_dataframe,"\n")
-print("name列:\n",d_dataframe["name"],"\n")
-print("height列のインデックス0番:",d_dataframe["height"][0],"\n")
+#print("name列:\n",d_dataframe["name"],"\n")
+#print("height列のインデックス0番:",d_dataframe["height"][0],"\n")
