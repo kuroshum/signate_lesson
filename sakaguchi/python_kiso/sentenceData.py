@@ -33,7 +33,6 @@ class sentence:
 
 	#------------------------------------
 	# 
-	# 
 	def getPositiveSentence(self):
 		result = self.data[self.data['score']==1]['sentence']
 		return result
@@ -51,7 +50,6 @@ class sentence:
 		plt.title("keyword:"+keyword,fontsize=14)
 		plt.xlabel("Score",fontsize=14)
 		plt.ylabel("Ratio",fontsize=14)
-
 		plt.show()
 #------------------------------------
 
