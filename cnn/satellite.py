@@ -17,47 +17,46 @@ if __name__ == '__main__':
 			# 'ID'と'NUM'が連動していない場合は例外を投げる
 			if not df0[df0['NUM'] != df0['NUM'][0]].empty:
 				raise Exception('Error')
-			df1 = df0[df0['type'] == 'IR_ty'].sort_index()
-			df2 = df0[df0['type'] == 'WV_ty'].sort_index()
-			df3 = df0[df0['type'] == 'diff_ty'].sort_index()
-			df4 = df0[df0['type'] == 'IR_wide'].sort_index()
+			df0 = df0.sort_index()
+			# 任意の時刻におけるデータが複数存在する場合は例外を投げる
+			df1 = df0[df0['type'] == 'IR_ty'].to_dict(orient='index')
+			df2 = df0[df0['type'] == 'WV_ty'].to_dict(orient='index')
+			df3 = df0[df0['type'] == 'diff_ty'].to_dict(orient='index')
+			df4 = df0[df0['type'] == 'IR_wide'].to_dict(orient='index')
 			values = []
-			i = df1.index[0]
-			while i <= df1.index[len(df1.index) - 1] - pd.offsets.Hour(stop):
+			i = df0.index[0]
+			while i <= df0.index[len(df0.index) - 1] - pd.offsets.Hour(stop):
 				series = [[], [], [], [], [], [], [], [], [], [], []]
 				j = i
 				while j <= i + pd.offsets.Hour(stop):
 					# 任意の時刻におけるデータが存在しない場合は追加をしない
-					if df1[df1.index == j].empty or df2[df2.index == j].empty or df3[df3.index == j].empty or df4[df4.index == j].empty:
+					if j not in df1 or j not in df2 or j not in df3 or j not in df4:
 						print('Missing: {0}'.format(j), file=sys.stderr)
 						j += pd.offsets.Hour(step)
 						continue
-					# 任意の時刻におけるデータが複数存在する場合は例外を投げる
-					if len(df1[df1.index == j]) > 1 or len(df2[df2.index == j]) > 1 or len(df3[df3.index == j]) > 1 or len(df4[df4.index == j]) > 1:
-						raise Exception('Error')
 					# 'type'ごとに'lon'が異なる場合は例外を投げる
-					if df1[df1.index == j]['lon'][0] != df2[df2.index == j]['lon'][0] or df1[df1.index == j]['lon'][0] != df3[df3.index == j]['lon'][0] or df1[df1.index == j]['lon'][0] != df4[df4.index == j]['lon'][0]:
+					if df1[j]['lon'] != df2[j]['lon'] or df1[j]['lon'] != df3[j]['lon'] or df1[j]['lon'] != df4[j]['lon']:
 						raise Exception('Error')
 					# 'type'ごとに'lat'が異なる場合は例外を投げる
-					if df1[df1.index == j]['lat'][0] != df2[df2.index == j]['lat'][0] or df1[df1.index == j]['lat'][0] != df3[df3.index == j]['lat'][0] or df1[df1.index == j]['lat'][0] != df4[df4.index == j]['lat'][0]:
+					if df1[j]['lat'] != df2[j]['lat'] or df1[j]['lat'] != df3[j]['lat'] or df1[j]['lat'] != df4[j]['lat']:
 						raise Exception('Error')
 					# 'type'ごとに'cp'が異なる場合は例外を投げる
-					if df1[df1.index == j]['cp'][0] != df2[df2.index == j]['cp'][0] or df1[df1.index == j]['cp'][0] != df3[df3.index == j]['cp'][0] or df1[df1.index == j]['cp'][0] != df4[df4.index == j]['cp'][0]:
+					if df1[j]['cp'] != df2[j]['cp'] or df1[j]['cp'] != df3[j]['cp'] or df1[j]['cp'] != df4[j]['cp']:
 						raise Exception('Error')
-					series[0].append(df1[df1.index == j].index)
-					series[1].append(df1[df1.index == j]['lon'][0])
-					series[2].append(df1[df1.index == j]['lat'][0])
-					series[3].append(df4[df4.index == j]['img'].values[0])
-					series[4].append(df1[df1.index == j]['img'].values[0])
-					series[5].append(df2[df2.index == j]['img'].values[0])
-					series[6].append(df3[df3.index == j]['img'].values[0])
-					series[7].append(df1[df1.index == j]['cp'][0])
+					series[0].append(j)
+					series[1].append(df1[j]['lon'])
+					series[2].append(df1[j]['lat'])
+					series[3].append(df4[j]['img'])
+					series[4].append(df1[j]['img'])
+					series[5].append(df2[j]['img'])
+					series[6].append(df3[j]['img'])
+					series[7].append(df1[j]['cp'])
 					series[8].append(False)
-					series[9].append(df1[df1.index == j]['NUM'][0])
-					series[10].append(df1[df1.index == j]['ID'][0])
+					series[9].append(df1[j]['NUM'])
+					series[10].append(df1[j]['ID'])
 					j += pd.offsets.Hour(step)
 				# 単位時間あたりの中心気圧の低下量を計算する
-				diff.append((series[7][len(series[7]) - 1] - series[7][0]) / ((series[0][len(series[0]) - 1] - series[0][0]) / pd.Timedelta('1 hour'))[0])
+				diff.append((series[7][len(series[7]) - 1] - series[7][0]) / ((series[0][len(series[0]) - 1] - series[0][0]) / pd.Timedelta('1 hour')))
 				values.append(series)
 				i += pd.offsets.Hour(step)
 			lists.append(pd.DataFrame.from_dict(dict(zip(range(len(values)), values)), columns=['date', 'lon', 'lat', 'wide', 'ty', 'WV', 'Diff', 'cp', 'true', 'NUM', 'ID'], orient='index'))
@@ -71,7 +70,7 @@ if __name__ == '__main__':
 			lists = pkl.load(file)
 		for df in lists:
 			for index, series in df.iterrows():
-				if (series['cp'][len(series['cp']) - 1] - series['cp'][0]) / ((series['date'][len(series['date']) - 1] - series['date'][0]) / pd.Timedelta('1 hour'))[0] <= threshold:
+				if (series['cp'][len(series['cp']) - 1] - series['cp'][0]) / ((series['date'][len(series['date']) - 1] - series['date'][0]) / pd.Timedelta('1 hour')) <= threshold:
 					series['true'] = [True] * len(series['true'])
 		with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'satellite_window/satellite_window_fill' + str(year) + '.pkl'), 'wb') as file:
 			pkl.dump(lists, file, -1)
