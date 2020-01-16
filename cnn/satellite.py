@@ -21,7 +21,7 @@ if __name__ == '__main__':
 			df2 = df0[df0['type'] == 'WV_ty'].sort_index()
 			df3 = df0[df0['type'] == 'diff_ty'].sort_index()
 			df4 = df0[df0['type'] == 'IR_wide'].sort_index()
-			values = pd.DataFrame(columns=['date', 'lon', 'lat', 'wide', 'ty', 'WV', 'Diff', 'cp', 'true', 'NUM', 'ID'])
+			values = []
 			i = df1.index[0]
 			while i <= df1.index[len(df1.index) - 1] - pd.offsets.Hour(stop):
 				series = [[], [], [], [], [], [], [], [], [], [], []]
@@ -58,9 +58,9 @@ if __name__ == '__main__':
 					j += pd.offsets.Hour(step)
 				# 単位時間あたりの中心気圧の低下量を計算する
 				diff.append((series[7][len(series[7]) - 1] - series[7][0]) / ((series[0][len(series[0]) - 1] - series[0][0]) / pd.Timedelta('1 hour'))[0])
-				values = values.append(pd.Series(series, index=values.columns), ignore_index=True)
+				values.append(series)
 				i += pd.offsets.Hour(step)
-			lists.append(values)
+			lists.append(pd.DataFrame.from_dict(dict(zip(range(len(values)), values)), columns=['date', 'lon', 'lat', 'wide', 'ty', 'WV', 'Diff', 'cp', 'true', 'NUM', 'ID'], orient='index'))
 		with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'satellite_window/satellite_window_fill' + str(year) + '.pkl'), 'wb') as file:
 			pkl.dump(lists, file, -1)
 	diff.sort()
