@@ -4,13 +4,10 @@ import os
 import sys
 import time
 
-if __name__ == '__main__':
-	stop = 48
-	step = 6
-	start = time.time()
+def make_window(source, dest, year1, year2, stop=48, step=1):
 	diff = []
-	for year in range(1995, 2017 + 1, 1):
-		with open('/home/kurora/satellite_data/satellite_fill' + str(year) + '.pkl', 'rb') as file:
+	for year in range(year1, year2 + 1, 1):
+		with open(os.path.join(source, 'satellite_fill') + str(year) + '.pkl', 'rb') as file:
 			df = pkl.load(file)
 		lists = []
 		for name, df0 in df.sort_values('ID').groupby('ID'):
@@ -60,18 +57,26 @@ if __name__ == '__main__':
 				values.append(series)
 				i += pd.offsets.Hour(step)
 			lists.append(pd.DataFrame.from_dict(dict(zip(range(len(values)), values)), columns=['date', 'lon', 'lat', 'wide', 'ty', 'WV', 'Diff', 'cp', 'true', 'NUM', 'ID'], orient='index'))
-		with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'satellite_window/satellite_window_fill' + str(year) + '.pkl'), 'wb') as file:
+		with open(os.path.join(dest, 'satellite_window_fill' + str(year) + '.pkl'), 'wb') as file:
 			pkl.dump(lists, file, -1)
 	diff.sort()
 	threshold = diff[int(len(diff) * 0.05)]
-	print('Threshold: {0}'.format(threshold), file=sys.stdout)
-	for year in range(1995, 2017 + 1, 1):
-		with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'satellite_window/satellite_window_fill' + str(year) + '.pkl'), 'rb') as file:
+	print('Threshold ({0}-{1}): {2}'.format(year1, year2, threshold), file=sys.stdout)
+	for year in range(year1, year2 + 1, 1):
+		with open(os.path.join(dest, 'satellite_window_fill' + str(year) + '.pkl'), 'rb') as file:
 			lists = pkl.load(file)
 		for df in lists:
 			for index, series in df.iterrows():
 				if (series['cp'][len(series['cp']) - 1] - series['cp'][0]) / ((series['date'][len(series['date']) - 1] - series['date'][0]) / pd.Timedelta('1 hour')) <= threshold:
 					series['true'] = [True] * len(series['true'])
-		with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'satellite_window/satellite_window_fill' + str(year) + '.pkl'), 'wb') as file:
+		with open(os.path.join(dest, 'satellite_window_fill' + str(year) + '.pkl'), 'wb') as file:
 			pkl.dump(lists, file, -1)
+
+if __name__ == '__main__':
+	start = time.time()
+	source = '/home/kurora/satellite_data'
+	dest = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'satellite_window')
+	os.makedirs(dest, exist_ok=True)
+	make_window(source, dest, 1995, 2005, stop=48, step=6)
+	make_window(source, dest, 2006, 2017, stop=48, step=6)
 	print('Time: {0}'.format(time.time() - start), file=sys.stdout)
