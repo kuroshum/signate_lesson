@@ -20,6 +20,7 @@ def make_window(source, dest, year1, year2, stop=48, step=1):
 			df2 = df0[df0['type'] == 'WV_ty'].to_dict(orient='index')
 			df3 = df0[df0['type'] == 'diff_ty'].to_dict(orient='index')
 			df4 = df0[df0['type'] == 'IR_wide'].to_dict(orient='index')
+			diff.extend(df0['cp'].values.tolist())
 			values = []
 			i = df0.index[0]
 			while i <= df0.index[len(df0.index) - 1] - pd.offsets.Hour(stop):
@@ -52,8 +53,6 @@ def make_window(source, dest, year1, year2, stop=48, step=1):
 					series[9].append(df1[j]['NUM'])
 					series[10].append(df1[j]['ID'])
 					j += pd.offsets.Hour(step)
-				# 単位時間あたりの中心気圧の低下量を計算する
-				diff.append((series[7][len(series[7]) - 1] - series[7][0]) / ((series[0][len(series[0]) - 1] - series[0][0]) / pd.Timedelta('1 hour')))
 				values.append(series)
 				i += pd.offsets.Hour(step)
 			lists.append(pd.DataFrame.from_dict(dict(zip(range(len(values)), values)), columns=['date', 'lon', 'lat', 'wide', 'ty', 'WV', 'Diff', 'cp', 'true', 'NUM', 'ID'], orient='index'))
@@ -67,7 +66,7 @@ def make_window(source, dest, year1, year2, stop=48, step=1):
 			lists = pkl.load(file)
 		for df in lists:
 			for index, series in df.iterrows():
-				if (series['cp'][len(series['cp']) - 1] - series['cp'][0]) / ((series['date'][len(series['date']) - 1] - series['date'][0]) / pd.Timedelta('1 hour')) <= threshold:
+				if series['cp'][len(series['cp']) - 1] <= threshold:
 					series['true'] = [True] * len(series['true'])
 		with open(os.path.join(dest, 'satellite_window_fill' + str(year) + '.pkl'), 'wb') as file:
 			pkl.dump(lists, file, -1)
